@@ -86,6 +86,10 @@
           <p class="backup-note">
             Data is stored on this device. Back up periodically, then restore that JSON on another phone or browser.
           </p>
+          <label class="import-box">
+            Restore from backup JSON
+            <input id="import-data" type="file" accept="application/json" />
+          </label>
           <form id="round-form" class="form-grid">
             <label>
               Date
@@ -291,16 +295,6 @@
             <button class="secondary-button" id="copy-summary" type="button">Copy</button>
           </div>
           <div class="note-stack" id="insight-list"></div>
-        </section>
-
-        <section class="panel">
-          <div class="panel-header">
-            <h2>Restore Data</h2>
-          </div>
-          <label class="import-box">
-            Restore from backup JSON
-            <input id="import-data" type="file" accept="application/json" />
-          </label>
         </section>
       </section>
     </main>
