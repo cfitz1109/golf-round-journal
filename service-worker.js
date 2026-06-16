@@ -1,4 +1,4 @@
-const CACHE_NAME = "golf-journal-v2";
+const CACHE_NAME = "golf-journal-v3";
 
 const APP_SHELL = [
   "./",

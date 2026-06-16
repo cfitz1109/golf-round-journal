@@ -62,17 +62,18 @@ const demoRound = {
 
 function loadState() {
   const saved = localStorage.getItem(STORAGE_KEY);
-  if (!saved) return { rounds: [], practice: [], migrations: [] };
+  if (!saved) return { rounds: [], practice: [], insights: [], migrations: [] };
 
   try {
     const parsed = JSON.parse(saved);
     return {
       rounds: Array.isArray(parsed.rounds) ? parsed.rounds : [],
       practice: Array.isArray(parsed.practice) ? parsed.practice : [],
+      insights: Array.isArray(parsed.insights) ? parsed.insights : [],
       migrations: Array.isArray(parsed.migrations) ? parsed.migrations : [],
     };
   } catch {
-    return { rounds: [], practice: [], migrations: [] };
+    return { rounds: [], practice: [], insights: [], migrations: [] };
   }
 }
 
@@ -384,6 +385,7 @@ function renderInsights() {
   );
 
   renderHoleTable(filtered);
+  renderSavedInsights();
 
   const insights = buildInsights(filtered);
   const list = document.querySelector("#insight-list");
@@ -393,6 +395,30 @@ function renderInsights() {
     return;
   }
   insights.forEach((insight) => addNote(list, insight.title, insight.body));
+}
+
+function renderSavedInsights() {
+  const list = document.querySelector("#saved-insight-list");
+  const count = document.querySelector("#saved-insight-count");
+  const insights = [...(state.insights || [])].sort(byDateDesc);
+  count.textContent = `${insights.length} saved`;
+  list.innerHTML = "";
+
+  if (!insights.length) {
+    list.append(emptyState());
+    return;
+  }
+
+  insights.forEach((insight) => {
+    const note = document.createElement("article");
+    note.className = "note";
+    note.innerHTML = `
+      <strong>${insight.title || "Saved insight"}</strong>
+      <p>${insight.body || ""}</p>
+      <small>${formatDate(insight.date)}${insight.category ? ` · ${insight.category}` : ""}</small>
+    `;
+    list.append(note);
+  });
 }
 
 function renderHoleTable(rounds) {
@@ -838,6 +864,7 @@ document.querySelector("#import-data").addEventListener("change", async (event) 
     const imported = JSON.parse(text);
     state.rounds = Array.isArray(imported.rounds) ? imported.rounds : state.rounds;
     state.practice = Array.isArray(imported.practice) ? imported.practice : state.practice;
+    state.insights = Array.isArray(imported.insights) ? imported.insights : state.insights;
     state.migrations = Array.isArray(imported.migrations) ? imported.migrations : state.migrations;
     saveState();
     render();
