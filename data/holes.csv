@@ -1,1 +1,161 @@
 date,course,tees,round_score,hole,par,score,to_par,fairway,gir,putts,penalties
+2026-06-13,Falmouth Country Club,Green,87,1,4,6,2,FALSE,FALSE,2,0
+2026-06-13,Falmouth Country Club,Green,87,2,3,5,2,,FALSE,1,1
+2026-06-13,Falmouth Country Club,Green,87,3,4,4,0,FALSE,FALSE,1,0
+2026-06-13,Falmouth Country Club,Green,87,4,4,4,0,TRUE,TRUE,2,0
+2026-06-13,Falmouth Country Club,Green,87,5,3,3,0,,TRUE,2,0
+2026-06-13,Falmouth Country Club,Green,87,6,5,5,0,FALSE,TRUE,2,0
+2026-06-13,Falmouth Country Club,Green,87,7,4,4,0,TRUE,TRUE,2,0
+2026-06-13,Falmouth Country Club,Green,87,8,5,5,0,FALSE,TRUE,2,0
+2026-06-13,Falmouth Country Club,Green,87,9,4,4,0,FALSE,TRUE,2,0
+2026-06-13,Falmouth Country Club,Green,87,10,4,7,3,FALSE,FALSE,1,2
+2026-06-13,Falmouth Country Club,Green,87,11,3,4,1,,FALSE,2,0
+2026-06-13,Falmouth Country Club,Green,87,12,4,6,2,FALSE,FALSE,2,1
+2026-06-13,Falmouth Country Club,Green,87,13,4,5,1,FALSE,FALSE,2,0
+2026-06-13,Falmouth Country Club,Green,87,14,5,5,0,TRUE,TRUE,2,0
+2026-06-13,Falmouth Country Club,Green,87,15,4,5,1,TRUE,TRUE,3,0
+2026-06-13,Falmouth Country Club,Green,87,16,3,4,1,,FALSE,1,0
+2026-06-13,Falmouth Country Club,Green,87,17,5,6,1,FALSE,TRUE,3,0
+2026-06-13,Falmouth Country Club,Green,87,18,4,5,1,FALSE,TRUE,3,0
+2026-06-07,Falmouth Country Club,Blue,84,1,4,5,1,FALSE,FALSE,2,0
+2026-06-07,Falmouth Country Club,Blue,84,2,3,3,0,,TRUE,2,0
+2026-06-07,Falmouth Country Club,Blue,84,3,4,4,0,FALSE,TRUE,2,0
+2026-06-07,Falmouth Country Club,Blue,84,4,4,7,3,FALSE,FALSE,2,2
+2026-06-07,Falmouth Country Club,Blue,84,5,3,4,1,,FALSE,2,0
+2026-06-07,Falmouth Country Club,Blue,84,6,5,7,2,FALSE,FALSE,1,2
+2026-06-07,Falmouth Country Club,Blue,84,7,4,5,1,FALSE,FALSE,2,0
+2026-06-07,Falmouth Country Club,Blue,84,8,5,5,0,FALSE,TRUE,2,0
+2026-06-07,Falmouth Country Club,Blue,84,9,4,5,1,FALSE,FALSE,2,0
+2026-06-07,Falmouth Country Club,Blue,84,10,4,4,0,TRUE,TRUE,2,0
+2026-06-07,Falmouth Country Club,Blue,84,11,3,3,0,,TRUE,2,0
+2026-06-07,Falmouth Country Club,Blue,84,12,4,4,0,FALSE,TRUE,2,0
+2026-06-07,Falmouth Country Club,Blue,84,13,4,4,0,TRUE,TRUE,2,0
+2026-06-07,Falmouth Country Club,Blue,84,14,5,6,1,FALSE,FALSE,1,1
+2026-06-07,Falmouth Country Club,Blue,84,15,4,5,1,FALSE,FALSE,2,0
+2026-06-07,Falmouth Country Club,Blue,84,16,3,3,0,,TRUE,2,0
+2026-06-07,Falmouth Country Club,Blue,84,17,5,5,0,FALSE,TRUE,2,0
+2026-06-07,Falmouth Country Club,Blue,84,18,4,5,1,FALSE,FALSE,2,1
+2026-05-31,Falmouth Country Club,Blue,83,1,4,5,1,TRUE,FALSE,2,0
+2026-05-31,Falmouth Country Club,Blue,83,2,3,4,1,,FALSE,2,0
+2026-05-31,Falmouth Country Club,Blue,83,3,4,4,0,FALSE,FALSE,1,0
+2026-05-31,Falmouth Country Club,Blue,83,4,4,5,1,TRUE,TRUE,3,0
+2026-05-31,Falmouth Country Club,Blue,83,5,3,5,2,,FALSE,2,0
+2026-05-31,Falmouth Country Club,Blue,83,6,5,7,2,TRUE,FALSE,3,0
+2026-05-31,Falmouth Country Club,Blue,83,7,4,5,1,TRUE,TRUE,3,0
+2026-05-31,Falmouth Country Club,Blue,83,8,5,5,0,FALSE,TRUE,2,0
+2026-05-31,Falmouth Country Club,Blue,83,9,4,4,0,FALSE,TRUE,2,0
+2026-05-31,Falmouth Country Club,Blue,83,10,4,4,0,TRUE,TRUE,2,0
+2026-05-31,Falmouth Country Club,Blue,83,11,3,3,0,,TRUE,2,0
+2026-05-31,Falmouth Country Club,Blue,83,12,4,5,1,FALSE,FALSE,2,0
+2026-05-31,Falmouth Country Club,Blue,83,13,4,3,-1,FALSE,TRUE,1,0
+2026-05-31,Falmouth Country Club,Blue,83,14,5,5,0,TRUE,FALSE,1,0
+2026-05-31,Falmouth Country Club,Blue,83,15,4,4,0,FALSE,TRUE,2,0
+2026-05-31,Falmouth Country Club,Blue,83,16,3,3,0,,FALSE,1,0
+2026-05-31,Falmouth Country Club,Blue,83,17,5,6,1,FALSE,FALSE,1,1
+2026-05-31,Falmouth Country Club,Blue,83,18,4,6,2,FALSE,FALSE,2,1
+2026-05-29,Falmouth Country Club,Green,79,1,4,5,1,TRUE,TRUE,3,0
+2026-05-29,Falmouth Country Club,Green,79,2,3,4,1,,FALSE,1,0
+2026-05-29,Falmouth Country Club,Green,79,3,4,4,0,FALSE,FALSE,1,0
+2026-05-29,Falmouth Country Club,Green,79,4,4,4,0,FALSE,FALSE,1,0
+2026-05-29,Falmouth Country Club,Green,79,5,3,3,0,,TRUE,2,0
+2026-05-29,Falmouth Country Club,Green,79,6,5,7,2,FALSE,FALSE,2,1
+2026-05-29,Falmouth Country Club,Green,79,7,4,4,0,TRUE,TRUE,2,0
+2026-05-29,Falmouth Country Club,Green,79,8,5,6,1,FALSE,FALSE,2,0
+2026-05-29,Falmouth Country Club,Green,79,9,4,5,1,TRUE,FALSE,2,0
+2026-05-29,Falmouth Country Club,Green,79,10,4,5,1,FALSE,FALSE,1,0
+2026-05-29,Falmouth Country Club,Green,79,11,3,3,0,,TRUE,2,0
+2026-05-29,Falmouth Country Club,Green,79,12,4,4,0,TRUE,TRUE,2,0
+2026-05-29,Falmouth Country Club,Green,79,13,4,3,-1,TRUE,TRUE,1,0
+2026-05-29,Falmouth Country Club,Green,79,14,5,6,1,FALSE,FALSE,2,0
+2026-05-29,Falmouth Country Club,Green,79,15,4,4,0,TRUE,TRUE,2,0
+2026-05-29,Falmouth Country Club,Green,79,16,3,2,-1,,TRUE,1,0
+2026-05-29,Falmouth Country Club,Green,79,17,5,5,0,,TRUE,2,0
+2026-05-29,Falmouth Country Club,Green,79,18,4,5,1,,FALSE,2,1
+2026-05-24,Falmouth Country Club,Blue,83,1,4,4,0,TRUE,TRUE,2,0
+2026-05-24,Falmouth Country Club,Blue,83,2,3,3,0,,TRUE,2,0
+2026-05-24,Falmouth Country Club,Blue,83,3,4,7,3,FALSE,FALSE,1,1
+2026-05-24,Falmouth Country Club,Blue,83,4,4,4,0,FALSE,TRUE,2,0
+2026-05-24,Falmouth Country Club,Blue,83,5,3,3,0,,FALSE,1,0
+2026-05-24,Falmouth Country Club,Blue,83,6,5,6,1,FALSE,FALSE,2,1
+2026-05-24,Falmouth Country Club,Blue,83,7,4,6,2,FALSE,FALSE,2,0
+2026-05-24,Falmouth Country Club,Blue,83,8,5,5,0,TRUE,TRUE,2,0
+2026-05-24,Falmouth Country Club,Blue,83,9,4,5,1,FALSE,FALSE,1,0
+2026-05-24,Falmouth Country Club,Blue,83,10,4,4,0,TRUE,TRUE,2,0
+2026-05-24,Falmouth Country Club,Blue,83,11,3,3,0,,TRUE,2,0
+2026-05-24,Falmouth Country Club,Blue,83,12,4,5,1,TRUE,TRUE,3,0
+2026-05-24,Falmouth Country Club,Blue,83,13,4,3,-1,TRUE,TRUE,1,0
+2026-05-24,Falmouth Country Club,Blue,83,14,5,7,2,FALSE,FALSE,2,1
+2026-05-24,Falmouth Country Club,Blue,83,15,4,6,2,FALSE,FALSE,2,1
+2026-05-24,Falmouth Country Club,Blue,83,16,3,3,0,,TRUE,2,0
+2026-05-24,Falmouth Country Club,Blue,83,17,5,5,0,FALSE,TRUE,2,0
+2026-05-24,Falmouth Country Club,Blue,83,18,4,4,0,TRUE,TRUE,2,0
+2026-05-23,Falmouth Country Club,Blue,41,10,4,4,0,TRUE,TRUE,2,0
+2026-05-23,Falmouth Country Club,Blue,41,11,3,4,1,,FALSE,2,0
+2026-05-23,Falmouth Country Club,Blue,41,12,4,3,-1,FALSE,TRUE,1,0
+2026-05-23,Falmouth Country Club,Blue,41,13,4,4,0,TRUE,FALSE,1,0
+2026-05-23,Falmouth Country Club,Blue,41,14,5,5,0,FALSE,TRUE,2,0
+2026-05-23,Falmouth Country Club,Blue,41,15,4,4,0,TRUE,FALSE,1,0
+2026-05-23,Falmouth Country Club,Blue,41,16,3,4,1,,FALSE,2,0
+2026-05-23,Falmouth Country Club,Blue,41,17,5,7,2,FALSE,FALSE,1,1
+2026-05-23,Falmouth Country Club,Blue,41,18,4,6,2,FALSE,FALSE,2,0
+2026-05-18,Falmouth Country Club,Blue,38,1,4,4,0,TRUE,FALSE,1,0
+2026-05-18,Falmouth Country Club,Blue,38,2,3,4,1,,TRUE,3,0
+2026-05-18,Falmouth Country Club,Blue,38,3,4,4,0,FALSE,FALSE,1,0
+2026-05-18,Falmouth Country Club,Blue,38,4,4,4,0,FALSE,TRUE,2,0
+2026-05-18,Falmouth Country Club,Blue,38,5,3,4,1,,FALSE,2,0
+2026-05-18,Falmouth Country Club,Blue,38,6,5,4,-1,FALSE,TRUE,1,0
+2026-05-18,Falmouth Country Club,Blue,38,7,4,5,1,FALSE,FALSE,1,0
+2026-05-18,Falmouth Country Club,Blue,38,8,5,5,0,TRUE,TRUE,2,0
+2026-05-18,Falmouth Country Club,Blue,38,9,4,4,0,TRUE,TRUE,2,0
+2026-05-09,Falmouth Country Club,Blue,40,1,4,5,1,FALSE,TRUE,3,0
+2026-05-09,Falmouth Country Club,Blue,40,2,3,3,0,,TRUE,2,0
+2026-05-09,Falmouth Country Club,Blue,40,3,4,5,1,TRUE,TRUE,3,0
+2026-05-09,Falmouth Country Club,Blue,40,4,4,4,0,TRUE,TRUE,2,0
+2026-05-09,Falmouth Country Club,Blue,40,5,3,4,1,,FALSE,2,0
+2026-05-09,Falmouth Country Club,Blue,40,6,5,4,-1,TRUE,TRUE,2,0
+2026-05-09,Falmouth Country Club,Blue,40,7,4,5,1,FALSE,FALSE,2,0
+2026-05-09,Falmouth Country Club,Blue,40,8,5,5,0,TRUE,TRUE,2,0
+2026-05-09,Falmouth Country Club,Blue,40,9,4,5,1,FALSE,FALSE,2,0
+2026-05-03,Falmouth Country Club,Blue,40,1,4,5,1,FALSE,FALSE,,0
+2026-05-03,Falmouth Country Club,Blue,40,2,3,4,1,,FALSE,,0
+2026-05-03,Falmouth Country Club,Blue,40,3,4,5,1,TRUE,FALSE,,0
+2026-05-03,Falmouth Country Club,Blue,40,4,4,5,1,FALSE,FALSE,,1
+2026-05-03,Falmouth Country Club,Blue,40,5,3,3,0,,FALSE,,0
+2026-05-03,Falmouth Country Club,Blue,40,6,5,5,0,FALSE,TRUE,,0
+2026-05-03,Falmouth Country Club,Blue,40,7,4,3,-1,TRUE,TRUE,,0
+2026-05-03,Falmouth Country Club,Blue,40,8,5,6,1,FALSE,TRUE,,0
+2026-05-03,Falmouth Country Club,Blue,40,9,4,4,0,TRUE,TRUE,,0
+2026-04-25,Falmouth Country Club,Blue (R1),38,1,4,6,2,FALSE,FALSE,2,1
+2026-04-25,Falmouth Country Club,Blue (R1),38,2,3,3,0,,TRUE,2,0
+2026-04-25,Falmouth Country Club,Blue (R1),38,3,4,4,0,FALSE,TRUE,2,0
+2026-04-25,Falmouth Country Club,Blue (R1),38,4,4,4,0,TRUE,TRUE,2,0
+2026-04-25,Falmouth Country Club,Blue (R1),38,5,3,4,1,,FALSE,2,0
+2026-04-25,Falmouth Country Club,Blue (R1),38,6,5,5,0,TRUE,TRUE,2,0
+2026-04-25,Falmouth Country Club,Blue (R1),38,7,4,3,-1,FALSE,TRUE,1,0
+2026-04-25,Falmouth Country Club,Blue (R1),38,8,5,5,0,FALSE,TRUE,2,0
+2026-04-25,Falmouth Country Club,Blue (R1),38,9,4,4,0,TRUE,TRUE,2,0
+2026-04-25,Falmouth Country Club,Blue (R2),37,1,4,4,0,FALSE,FALSE,1,0
+2026-04-25,Falmouth Country Club,Blue (R2),37,2,3,5,2,,FALSE,2,1
+2026-04-25,Falmouth Country Club,Blue (R2),37,3,4,4,0,FALSE,TRUE,2,0
+2026-04-25,Falmouth Country Club,Blue (R2),37,4,4,4,0,FALSE,TRUE,2,0
+2026-04-25,Falmouth Country Club,Blue (R2),37,5,3,4,1,,TRUE,3,0
+2026-04-25,Falmouth Country Club,Blue (R2),37,6,5,4,-1,TRUE,TRUE,2,0
+2026-04-25,Falmouth Country Club,Blue (R2),37,7,4,3,-1,FALSE,TRUE,1,0
+2026-04-25,Falmouth Country Club,Blue (R2),37,8,5,5,0,FALSE,TRUE,2,0
+2026-04-25,Falmouth Country Club,Blue (R2),37,9,4,4,0,TRUE,TRUE,2,0
+2026-04-18,Portland Country Club,Green,88,1,4,5,1,FALSE,TRUE,3,0
+2026-04-18,Portland Country Club,Green,88,2,4,5,1,FALSE,FALSE,2,0
+2026-04-18,Portland Country Club,Green,88,3,4,4,0,FALSE,TRUE,2,0
+2026-04-18,Portland Country Club,Green,88,4,3,4,1,,FALSE,2,0
+2026-04-18,Portland Country Club,Green,88,5,4,6,2,FALSE,FALSE,3,0
+2026-04-18,Portland Country Club,Green,88,6,5,7,2,TRUE,FALSE,2,0
+2026-04-18,Portland Country Club,Green,88,7,3,4,1,,FALSE,2,0
+2026-04-18,Portland Country Club,Green,88,8,4,5,1,TRUE,FALSE,2,0
+2026-04-18,Portland Country Club,Green,88,9,4,5,1,FALSE,FALSE,2,0
+2026-04-18,Portland Country Club,Green,88,10,4,5,1,TRUE,TRUE,3,0
+2026-04-18,Portland Country Club,Green,88,11,4,5,1,FALSE,TRUE,3,0
+2026-04-18,Portland Country Club,Green,88,12,4,4,0,FALSE,TRUE,2,0
+2026-04-18,Portland Country Club,Green,88,13,4,4,0,FALSE,FALSE,1,0
+2026-04-18,Portland Country Club,Green,88,14,3,4,1,,FALSE,2,0
+2026-04-18,Portland Country Club,Green,88,15,4,6,2,FALSE,TRUE,4,0
+2026-04-18,Portland Country Club,Green,88,16,5,6,1,FALSE,FALSE,2,0
