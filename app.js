@@ -1,86 +1,99 @@
-const STORAGE_KEY = "golfJournal:v1";
-const state = loadState();
+/* Golf Round Journal — read-only dashboard.
+   Data source: ./data/rounds.csv and ./data/holes.csv (committed to this repo).
+   This app does NOT write data. Rounds/holes are produced by the Codex + Obsidian
+   workflow and pushed here as CSVs. No localStorage, no service worker. */
+
 const holeTableSort = { key: "hole", direction: "asc" };
+let state = { rounds: [], practice: [], insights: [] };
 
-const demoRound = {
-  id: crypto.randomUUID(),
-  date: new Date().toISOString().slice(0, 10),
-  course: "Demo Golf Club",
-  tees: "White",
-  holesPlayed: 18,
-  score: 82,
-  front: 41,
-  back: 41,
-  fairways: "7/14",
-  gir: "9/18",
-  putts: 32,
-  penalties: 1,
-  sg: {
-    total: -4.2,
-    teeToGreen: -3.1,
-    tee: -1.2,
-    approach: -1.4,
-    wedge: 0.3,
-    around: -0.8,
-    sand: null,
-    putting: -1.1,
-  },
-  notes: {
-    feels:
-      "Demo feel: smooth tempo, balanced finish, and one clear target before each swing.",
-    worked:
-      "Demo round with steady scoring, a useful tee-shot baseline, and enough hole data to exercise the insights table.",
-    leaks:
-      "Demo leak: approach proximity and short-game conversion need attention.",
-    practicePriority:
-      "Use this only as a sample. Replace it by importing your private backup JSON or saving real rounds on this device.",
-    mood: "Demo context: neutral practice round.",
-  },
-  holes: [
-    { hole: 1, par: 4, score: 5, fairway: true, gir: false, putts: 2, penalties: 0 },
-    { hole: 2, par: 3, score: 3, fairway: null, gir: true, putts: 2, penalties: 0 },
-    { hole: 3, par: 4, score: 4, fairway: true, gir: true, putts: 2, penalties: 0 },
-    { hole: 4, par: 4, score: 5, fairway: false, gir: false, putts: 2, penalties: 1 },
-    { hole: 5, par: 3, score: 3, fairway: null, gir: true, putts: 2, penalties: 0 },
-    { hole: 6, par: 5, score: 6, fairway: false, gir: false, putts: 2, penalties: 0 },
-    { hole: 7, par: 4, score: 4, fairway: true, gir: true, putts: 2, penalties: 0 },
-    { hole: 8, par: 5, score: 5, fairway: true, gir: true, putts: 2, penalties: 0 },
-    { hole: 9, par: 4, score: 6, fairway: false, gir: false, putts: 3, penalties: 0 },
-    { hole: 10, par: 4, score: 4, fairway: true, gir: true, putts: 2, penalties: 0 },
-    { hole: 11, par: 3, score: 4, fairway: null, gir: false, putts: 2, penalties: 0 },
-    { hole: 12, par: 4, score: 4, fairway: true, gir: true, putts: 2, penalties: 0 },
-    { hole: 13, par: 4, score: 5, fairway: false, gir: false, putts: 2, penalties: 0 },
-    { hole: 14, par: 5, score: 5, fairway: true, gir: true, putts: 2, penalties: 0 },
-    { hole: 15, par: 4, score: 4, fairway: true, gir: true, putts: 2, penalties: 0 },
-    { hole: 16, par: 3, score: 3, fairway: null, gir: true, putts: 2, penalties: 0 },
-    { hole: 17, par: 5, score: 6, fairway: false, gir: false, putts: 2, penalties: 0 },
-    { hole: 18, par: 4, score: 5, fairway: false, gir: false, putts: 2, penalties: 0 },
-  ],
-  screenshots: ["Demo scorecard"],
-  createdAt: new Date().toISOString(),
-};
+/* ---------- CSV loading + mapping ---------- */
 
-function loadState() {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (!saved) return { rounds: [], practice: [], insights: [], migrations: [] };
-
-  try {
-    const parsed = JSON.parse(saved);
-    return {
-      rounds: Array.isArray(parsed.rounds) ? parsed.rounds : [],
-      practice: Array.isArray(parsed.practice) ? parsed.practice : [],
-      insights: Array.isArray(parsed.insights) ? parsed.insights : [],
-      migrations: Array.isArray(parsed.migrations) ? parsed.migrations : [],
-    };
-  } catch {
-    return { rounds: [], practice: [], insights: [], migrations: [] };
-  }
+function parseCsv(text) {
+  if (!text || !text.trim()) return [];
+  return Papa.parse(text.trim(), {
+    header: true,
+    skipEmptyLines: true,
+    dynamicTyping: false,
+  }).data;
 }
 
-function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+async function loadState() {
+  const bust = `?v=${Date.now()}`;
+  const [roundsText, holesText] = await Promise.all([
+    fetch(`./data/rounds.csv${bust}`).then((r) => (r.ok ? r.text() : "")),
+    fetch(`./data/holes.csv${bust}`).then((r) => (r.ok ? r.text() : "")),
+  ]);
+  const rounds = parseCsv(roundsText).map(mapRoundRow).filter((r) => r.date);
+  const holeRows = parseCsv(holesText).map(mapHoleRow);
+  groupHolesIntoRounds(rounds, holeRows);
+  return { rounds, practice: [], insights: [] };
 }
 
+function mapRoundRow(r) {
+  const holesPlayed = numberOrNull(r.holes) ?? 18;
+  return {
+    id: `${r.date}|${(r.course || "").trim()}|${(r.tees || "").trim()}`,
+    date: r.date,
+    course: (r.course || "").trim(),
+    tees: (r.tees || "").trim(),
+    holesPlayed,
+    nine: (r.nine || "").trim().toLowerCase() || undefined,
+    score: numberOrNull(r.score),
+    front: numberOrNull(r.front_9),
+    back: numberOrNull(r.back_9),
+    fairways: (r.fairways || "").trim(),
+    gir: (r.gir || "").trim(),
+    putts: numberOrNull(r.putts),
+    penalties: numberOrNull(r.penalties),
+    sg: {
+      total: numberOrNull(r.sg_total),
+      teeToGreen: numberOrNull(r.sg_t2g),
+      tee: numberOrNull(r.sg_ott),
+      approach: numberOrNull(r.sg_app),
+      wedge: numberOrNull(r.sg_wedge),
+      around: numberOrNull(r.sg_arg),
+      sand: numberOrNull(r.sg_sand),
+      putting: numberOrNull(r.sg_putting),
+    },
+    summary: (r.summary || "").trim(),
+    notes: {},
+    holes: [],
+  };
+}
+
+function mapHoleRow(h) {
+  return {
+    key: `${h.date}|${(h.course || "").trim()}|${(h.tees || "").trim()}`,
+    hole: numberOrNull(h.hole),
+    par: numberOrNull(h.par),
+    score: numberOrNull(h.score),
+    fairway: parseBooleanish(h.fairway),
+    gir: parseBooleanish(h.gir),
+    putts: numberOrNull(h.putts),
+    penalties: numberOrNull(h.penalties) || 0,
+  };
+}
+
+function groupHolesIntoRounds(rounds, holeRows) {
+  const byKey = new Map();
+  rounds.forEach((rd) => byKey.set(rd.id, rd));
+  holeRows.forEach((h) => {
+    const rd = byKey.get(h.key);
+    if (!rd) return;
+    rd.holes.push({
+      hole: h.hole,
+      par: h.par,
+      score: h.score,
+      fairway: h.fairway,
+      gir: h.gir,
+      putts: h.putts,
+      penalties: h.penalties,
+    });
+  });
+  rounds.forEach((rd) => rd.holes.sort((a, b) => (a.hole || 0) - (b.hole || 0)));
+}
+
+/* ---------- Helpers (unchanged from original) ---------- */
 
 function byDateDesc(a, b) {
   return new Date(b.date) - new Date(a.date);
@@ -90,13 +103,6 @@ function numberOrNull(value) {
   if (value === "" || value === null || value === undefined) return null;
   const num = Number(value);
   return Number.isFinite(num) ? num : null;
-}
-
-function pctFromFraction(value) {
-  if (!value || !value.includes("/")) return null;
-  const [made, total] = value.split("/").map(Number);
-  if (!Number.isFinite(made) || !Number.isFinite(total) || total === 0) return null;
-  return Math.round((made / total) * 1000) / 10;
 }
 
 function formatNumber(value, digits = 1) {
@@ -132,7 +138,10 @@ function strokesGainedForTrend(round, category) {
 }
 
 function roundPar(round) {
-  const holePar = (round.holes || []).reduce((sum, hole) => sum + (Number.isFinite(hole.par) ? hole.par : 0), 0);
+  const holePar = (round.holes || []).reduce(
+    (sum, hole) => sum + (Number.isFinite(hole.par) ? hole.par : 0),
+    0,
+  );
   if (holePar) return holePar;
   return round.holesPlayed === 9 ? 36 : 72;
 }
@@ -165,10 +174,11 @@ function activateView(viewName) {
   });
 }
 
+/* ---------- Rendering ---------- */
+
 function render() {
   renderToday();
   renderRounds();
-  renderPractice();
   renderInsights();
 }
 
@@ -179,19 +189,15 @@ function renderToday() {
   const score = document.querySelector("#latest-score");
   const priority = document.querySelector("#priority-label");
   const priorityDetail = document.querySelector("#priority-detail");
-  const feel = document.querySelector("#latest-feel");
-  const notes = document.querySelector("#latest-notes");
-
-  notes.innerHTML = "";
+  const summaryEl = document.querySelector("#latest-summary");
 
   if (!latest) {
     title.textContent = "No rounds yet";
-    subtitle.textContent = "Add a round to start building your memory bank.";
+    subtitle.textContent = "Add a round in Codex to populate this.";
     score.textContent = "--";
     priority.textContent = "Add data";
     priorityDetail.textContent = "Your biggest strokes gained leak will show here.";
-    feel.textContent = "--";
-    notes.append(emptyState());
+    summaryEl.textContent = "--";
     renderScoreChart([]);
     renderSgBars(null);
     return;
@@ -199,20 +205,14 @@ function renderToday() {
 
   title.textContent = latest.course;
   subtitle.textContent = `${formatDate(latest.date)}${latest.tees ? ` · ${latest.tees} tees` : ""}`;
-  score.textContent = latest.score ?? "--";
+  score.textContent = scoreDisplay(latest);
 
   const worst = worstStrokesGained(latest);
   priority.textContent = worst ? `${worst.label} ${formatSigned(worst.value)}` : "Review notes";
   priorityDetail.textContent = worst
     ? "Largest strokes gained gap from the latest round."
     : "Add strokes gained fields to unlock priority detection.";
-  feel.textContent = firstLine(latest.notes?.feels) || "--";
-
-  addNote(notes, "Swing feels", latest.notes?.feels);
-  addNote(notes, "What worked", latest.notes?.worked);
-  addNote(notes, "What cost shots", latest.notes?.leaks);
-  addNote(notes, "Practice priority", latest.notes?.practicePriority);
-  addNote(notes, "Mood / context", latest.notes?.mood);
+  summaryEl.textContent = latest.summary || "--";
 
   const recentRounds = [...state.rounds].sort(byDateDesc).slice(0, 5);
   renderScoreChart([...recentRounds].reverse());
@@ -239,7 +239,9 @@ function renderScoreChart(rounds) {
     const height = 32 + ((trendScore - min) / range) * 70;
     bar.className = "chart-bar";
     bar.style.height = `${height}px`;
-    bar.title = `${round.course}: ${scoreDisplay(round)}${round.holesPlayed === 9 ? `, ${trendScore} 18-hole pace` : ""}`;
+    bar.title = `${round.course}: ${scoreDisplay(round)}${
+      round.holesPlayed === 9 ? `, ${trendScore} 18-hole pace` : ""
+    }`;
     bar.innerHTML = `<span>${scoreDisplay(round)}</span>`;
     chart.append(bar);
   });
@@ -312,36 +314,7 @@ function renderRounds() {
         <span>SG PUTT<strong>${formatSigned(round.sg?.putting)}</strong></span>
         <span>GIR<strong>${round.gir || "--"}</strong></span>
       </div>
-      <p>${firstLine(round.notes?.practicePriority) || firstLine(round.notes?.feels) || "No notes yet."}</p>
-    `;
-    list.append(card);
-  });
-}
-
-function renderPractice() {
-  const list = document.querySelector("#practice-list");
-  const count = document.querySelector("#practice-count");
-  const sessions = [...state.practice].sort(byDateDesc);
-  count.textContent = `${sessions.length} ${sessions.length === 1 ? "session" : "sessions"}`;
-  list.innerHTML = "";
-
-  if (!sessions.length) {
-    list.append(emptyState());
-    return;
-  }
-
-  sessions.forEach((session) => {
-    const card = document.createElement("article");
-    card.className = "round-card";
-    card.innerHTML = `
-      <header>
-        <div>
-          <h3>${session.type}</h3>
-          <p>${formatDate(session.date)}${session.themes ? ` · ${session.themes}` : ""}</p>
-        </div>
-      </header>
-      <p>${session.notes || "No notes yet."}</p>
-      ${session.transfer ? `<p><strong>Transfer:</strong> ${session.transfer}</p>` : ""}
+      <p>${round.summary || "No notes."}</p>
     `;
     list.append(card);
   });
@@ -354,10 +327,7 @@ function renderInsights() {
   select.innerHTML = `<option value="all">All courses</option>${courses
     .map((course) => `<option value="${course}">${course}</option>`)
     .join("")}`;
-  select.value =
-    previous === "all" || courses.includes(previous)
-      ? previous
-      : "all";
+  select.value = previous === "all" || courses.includes(previous) ? previous : "all";
 
   const filtered =
     select.value === "all" ? state.rounds : state.rounds.filter((round) => round.course === select.value);
@@ -385,7 +355,6 @@ function renderInsights() {
   );
 
   renderHoleTable(filtered);
-  renderSavedInsights();
 
   const insights = buildInsights(filtered);
   const list = document.querySelector("#insight-list");
@@ -395,30 +364,6 @@ function renderInsights() {
     return;
   }
   insights.forEach((insight) => addNote(list, insight.title, insight.body));
-}
-
-function renderSavedInsights() {
-  const list = document.querySelector("#saved-insight-list");
-  const count = document.querySelector("#saved-insight-count");
-  const insights = [...(state.insights || [])].sort(byDateDesc);
-  count.textContent = `${insights.length} saved`;
-  list.innerHTML = "";
-
-  if (!insights.length) {
-    list.append(emptyState());
-    return;
-  }
-
-  insights.forEach((insight) => {
-    const note = document.createElement("article");
-    note.className = "note";
-    note.innerHTML = `
-      <strong>${insight.title || "Saved insight"}</strong>
-      <p>${insight.body || ""}</p>
-      <small>${formatDate(insight.date)}${insight.category ? ` · ${insight.category}` : ""}</small>
-    `;
-    list.append(note);
-  });
 }
 
 function renderHoleTable(rounds) {
@@ -532,14 +477,12 @@ function updateHoleSortButtons() {
 }
 
 function nineSummaryRow(label, rounds, nine) {
-  const values = rounds
-    .map((round) => (nine === "front" ? round.front : round.back))
-    .filter(Number.isFinite);
+  const values = rounds.map((round) => (nine === "front" ? round.front : round.back)).filter(Number.isFinite);
   const row = document.createElement("tr");
   row.className = "nine-summary-row";
-  row.innerHTML = `<td colspan="3">${label}</td><td colspan="4">${formatNumber(average(values), 1)} avg (${values.length} ${
-    values.length === 1 ? "round" : "rounds"
-  })</td>`;
+  row.innerHTML = `<td colspan="3">${label}</td><td colspan="4">${formatNumber(average(values), 1)} avg (${
+    values.length
+  } ${values.length === 1 ? "round" : "rounds"})</td>`;
   return row;
 }
 
@@ -603,15 +546,9 @@ function buildInsights(rounds) {
   if (Number.isFinite(penaltyAvg) && penaltyAvg >= 2) {
     insights.push({
       title: "Penalty watch",
-      body: `You are averaging ${formatNumber(penaltyAvg)} penalties recently. Track whether they come from start line, club choice, or commitment.`,
-    });
-  }
-
-  const practice = [...state.practice].sort(byDateDesc).slice(0, 3);
-  if (practice.length) {
-    insights.push({
-      title: "Practice thread",
-      body: `Recent sessions are focused on ${practice.map((session) => session.themes || session.type).join(", ")}.`,
+      body: `You are averaging ${formatNumber(
+        penaltyAvg,
+      )} penalties recently. Track whether they come from start line, club choice, or commitment.`,
     });
   }
 
@@ -652,10 +589,6 @@ function labelForSg(key) {
   }[key];
 }
 
-function firstLine(value) {
-  return value?.split("\n").map((line) => line.trim()).find(Boolean) || "";
-}
-
 function formatSigned(value) {
   if (!Number.isFinite(value)) return "--";
   return `${value > 0 ? "+" : ""}${formatNumber(value, 2)}`;
@@ -668,175 +601,18 @@ function formatDate(dateString) {
   );
 }
 
-function serializeRound(form) {
-  const data = new FormData(form);
-  return {
-    id: crypto.randomUUID(),
-    date: data.get("date"),
-    course: data.get("course")?.trim(),
-    tees: data.get("tees")?.trim(),
-    score: numberOrNull(data.get("score")),
-    front: numberOrNull(data.get("front")),
-    back: numberOrNull(data.get("back")),
-    fairways: data.get("fairways")?.trim(),
-    gir: data.get("gir")?.trim(),
-    putts: numberOrNull(data.get("putts")),
-    penalties: numberOrNull(data.get("penalties")),
-      sg: {
-        total: numberOrNull(data.get("sgTotal")),
-        teeToGreen: numberOrNull(data.get("sgTeeToGreen")),
-        tee: numberOrNull(data.get("sgTee")),
-      approach: numberOrNull(data.get("sgApproach")),
-      wedge: numberOrNull(data.get("sgWedge")),
-      around: numberOrNull(data.get("sgAround")),
-      sand: numberOrNull(data.get("sgSand")),
-      putting: numberOrNull(data.get("sgPutting")),
-    },
-    notes: {
-      feels: data.get("feels")?.trim(),
-      worked: data.get("worked")?.trim(),
-      leaks: data.get("leaks")?.trim(),
-      practicePriority: data.get("practicePriority")?.trim(),
-      mood: data.get("mood")?.trim(),
-    },
-    screenshots: [...form.elements.screenshots.files].map((file) => file.name),
-    holes: parseHoleDetails(data.get("holeDetails")),
-    derived: {
-      fairwayPct: pctFromFraction(data.get("fairways")),
-      girPct: pctFromFraction(data.get("gir")),
-    },
-    createdAt: new Date().toISOString(),
-  };
-}
-
-function parseHoleDetails(value) {
-  if (!value?.trim()) return [];
-  return value
-    .trim()
-    .split(/\n+/)
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => {
-      const [hole, par, score, fairway, gir, putts, penalties] = line.split(",").map((part) => part.trim());
-      return {
-        hole: numberOrNull(hole),
-        par: numberOrNull(par),
-        score: numberOrNull(score),
-        fairway: parseBooleanish(fairway),
-        gir: parseBooleanish(gir),
-        putts: numberOrNull(putts),
-        penalties: numberOrNull(penalties) || 0,
-      };
-    })
-    .filter((hole) => Number.isFinite(hole.hole) && Number.isFinite(hole.par) && Number.isFinite(hole.score));
-}
-
 function parseBooleanish(value) {
   if (!value) return null;
-  const normalized = value.toLowerCase();
+  const normalized = String(value).toLowerCase().trim();
   if (["y", "yes", "true", "1", "hit"].includes(normalized)) return true;
   if (["n", "no", "false", "0", "miss"].includes(normalized)) return false;
   return null;
 }
 
-function serializePractice(form) {
-  const data = new FormData(form);
-  return {
-    id: crypto.randomUUID(),
-    date: data.get("date"),
-    type: data.get("type"),
-    themes: data.get("themes")?.trim(),
-    notes: data.get("notes")?.trim(),
-    transfer: data.get("transfer")?.trim(),
-    createdAt: new Date().toISOString(),
-  };
-}
-
-function backupFilename() {
-  return `golf-journal-${new Date().toISOString().slice(0, 10)}.json`;
-}
-
-function backupBlob() {
-  const payload = {
-    ...state,
-    exportedAt: new Date().toISOString(),
-    app: "Golf Round Journal",
-    version: 1,
-  };
-  return new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-}
-
-function downloadBlob(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
-}
-
-async function backupData() {
-  const blob = backupBlob();
-  const filename = backupFilename();
-
-  if (typeof File === "function" && navigator.canShare && navigator.share) {
-    const file = new File([blob], filename, { type: "application/json" });
-    if (navigator.canShare({ files: [file] })) {
-      try {
-        await navigator.share({
-          files: [file],
-          title: "Golf Journal Backup",
-          text: "Save this JSON backup somewhere durable, like iCloud Drive.",
-        });
-        return;
-      } catch (error) {
-        if (error?.name === "AbortError") return;
-      }
-    }
-  }
-
-  downloadBlob(blob, filename);
-}
-
-function registerServiceWorker() {
-  if (!("serviceWorker" in navigator)) return;
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js").catch(() => {});
-  });
-}
+/* ---------- Event wiring + bootstrap ---------- */
 
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.addEventListener("click", () => activateView(tab.dataset.view));
-});
-
-document.querySelector("#round-form").addEventListener("submit", (event) => {
-  event.preventDefault();
-  state.rounds.push(serializeRound(event.currentTarget));
-  saveState();
-  event.currentTarget.reset();
-  render();
-  activateView("today");
-});
-
-document.querySelector("#practice-form").addEventListener("submit", (event) => {
-  event.preventDefault();
-  state.practice.push(serializePractice(event.currentTarget));
-  saveState();
-  event.currentTarget.reset();
-  render();
-});
-
-document.querySelector("#demo-data").addEventListener("click", () => {
-  const existingIndex = state.rounds.findIndex(
-    (round) => round.date === demoRound.date && round.course === demoRound.course && round.score === demoRound.score,
-  );
-  if (existingIndex >= 0) {
-    state.rounds[existingIndex] = { ...demoRound, id: state.rounds[existingIndex].id };
-  } else {
-    state.rounds.push({ ...demoRound, id: crypto.randomUUID() });
-  }
-  saveState();
-  render();
 });
 
 document.querySelector("#course-filter").addEventListener("change", renderInsights);
@@ -854,35 +630,11 @@ document.querySelectorAll("[data-sort-key]").forEach((button) => {
   });
 });
 
-document.querySelector("#export-data").addEventListener("click", backupData);
-
-document.querySelector("#import-data").addEventListener("change", async (event) => {
-  const [file] = event.currentTarget.files;
-  if (!file) return;
+(async () => {
   try {
-    const text = await file.text();
-    const imported = JSON.parse(text);
-    state.rounds = Array.isArray(imported.rounds) ? imported.rounds : state.rounds;
-    state.practice = Array.isArray(imported.practice) ? imported.practice : state.practice;
-    state.insights = Array.isArray(imported.insights) ? imported.insights : state.insights;
-    state.migrations = Array.isArray(imported.migrations) ? imported.migrations : state.migrations;
-    saveState();
-    render();
-  } finally {
-    event.currentTarget.value = "";
+    state = await loadState();
+  } catch (err) {
+    console.error("Failed to load golf data:", err);
   }
-});
-
-document.querySelector("#copy-summary").addEventListener("click", async () => {
-  const insights = [...document.querySelectorAll("#insight-list .note")]
-    .map((note) => `${note.querySelector("strong").textContent}: ${note.querySelector("p").textContent}`)
-    .join("\n");
-  if (insights) await navigator.clipboard.writeText(insights);
-});
-
-document.querySelectorAll('input[type="date"]').forEach((input) => {
-  input.value = new Date().toISOString().slice(0, 10);
-});
-
-registerServiceWorker();
-render();
+  render();
+})();

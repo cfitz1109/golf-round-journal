@@ -4,13 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#1278e6" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="Golf Journal" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <title>Golf Round Journal</title>
-    <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
     <link rel="stylesheet" href="styles.css" />
+    <script>
+      // One-time eviction of the old PWA service worker + caches.
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .getRegistrations()
+          .then((rs) => rs.forEach((r) => r.unregister()))
+          .catch(() => {});
+      }
+      if (window.caches && caches.keys) {
+        caches.keys().then((keys) => keys.forEach((k) => caches.delete(k))).catch(() => {});
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   </head>
   <body>
     <main class="app-shell">
@@ -19,13 +27,11 @@
           <p class="eyebrow">Golf Journal</p>
           <h1>Round Review</h1>
         </div>
-        <button class="secondary-button top-action" id="demo-data" type="button">Demo</button>
       </header>
 
       <nav class="tabs" aria-label="Primary">
         <button class="tab is-active" type="button" data-view="today">Today</button>
         <button class="tab" type="button" data-view="rounds">Rounds</button>
-        <button class="tab" type="button" data-view="practice">Practice</button>
         <button class="tab" type="button" data-view="insights">Insights</button>
       </nav>
 
@@ -34,7 +40,7 @@
           <div>
             <p class="eyebrow">Most recent round</p>
             <h2 id="latest-title">No rounds yet</h2>
-            <p id="latest-subtitle">Add a round to start building your memory bank.</p>
+            <p id="latest-subtitle">Add a round in Codex to populate this.</p>
           </div>
           <div class="score-pill" id="latest-score">--</div>
         </section>
@@ -46,9 +52,9 @@
             <small id="priority-detail">Your biggest strokes gained leak will show here.</small>
           </article>
           <article class="metric-tile">
-            <span>Last feel</span>
-            <strong id="latest-feel">--</strong>
-            <small>Pull this up before your next warmup.</small>
+            <span>Latest summary</span>
+            <strong id="latest-summary">--</strong>
+            <small>One-line takeaway from the most recent round.</small>
           </article>
         </section>
 
@@ -60,13 +66,6 @@
           <div class="chart" id="score-chart" aria-label="Score trend"></div>
           <div class="sg-bars" id="sg-bars"></div>
         </section>
-
-        <section class="panel">
-          <div class="panel-header">
-            <h2>Post-Round Thoughts</h2>
-          </div>
-          <div class="note-stack" id="latest-notes"></div>
-        </section>
       </section>
 
       <section class="view" id="rounds-view">
@@ -76,152 +75,6 @@
             <span id="round-count">0 rounds</span>
           </div>
           <div class="card-list" id="round-list"></div>
-        </section>
-
-        <section class="panel">
-          <div class="panel-header">
-            <h2>Add Round</h2>
-            <button class="secondary-button" id="export-data" type="button">Backup</button>
-          </div>
-          <p class="backup-note">
-            Data is stored on this device. Back up periodically, then restore that JSON on another phone or browser.
-          </p>
-          <label class="import-box">
-            Restore from backup JSON
-            <input id="import-data" type="file" accept="application/json" />
-          </label>
-          <form id="round-form" class="form-grid">
-            <label>
-              Date
-              <input name="date" type="date" required />
-            </label>
-            <label>
-              Course
-              <input name="course" placeholder="Home Course" required />
-            </label>
-            <label>
-              Tees
-              <input name="tees" placeholder="Blue" />
-            </label>
-            <label>
-              Score
-              <input name="score" type="number" min="50" max="140" required />
-            </label>
-            <label>
-              Front 9
-              <input name="front" type="number" min="20" max="70" />
-            </label>
-            <label>
-              Back 9
-              <input name="back" type="number" min="20" max="70" />
-            </label>
-            <label>
-              Fairways
-              <input name="fairways" placeholder="6/9" />
-            </label>
-            <label>
-              GIR
-              <input name="gir" placeholder="11/18" />
-            </label>
-            <label>
-              Putts
-              <input name="putts" type="number" min="18" max="60" />
-            </label>
-            <label>
-              Penalties
-              <input name="penalties" type="number" min="0" max="18" />
-            </label>
-            <fieldset>
-              <legend>Strokes Gained</legend>
-              <div class="mini-grid">
-                <input name="sgTotal" type="number" step="0.01" placeholder="Total" />
-                <input name="sgTeeToGreen" type="number" step="0.01" placeholder="Tee to Green" />
-                <input name="sgTee" type="number" step="0.01" placeholder="Tee" />
-                <input name="sgApproach" type="number" step="0.01" placeholder="Approach" />
-                <input name="sgWedge" type="number" step="0.01" placeholder="Wedge" />
-                <input name="sgAround" type="number" step="0.01" placeholder="Around" />
-                <input name="sgSand" type="number" step="0.01" placeholder="Sand" />
-                <input name="sgPutting" type="number" step="0.01" placeholder="Putting" />
-              </div>
-            </fieldset>
-            <label class="full">
-              Swing feels
-              <textarea name="feels" placeholder="What felt repeatable today?"></textarea>
-            </label>
-            <label class="full">
-              What worked
-              <textarea name="worked" placeholder="Shots, clubs, decisions, routines..."></textarea>
-            </label>
-            <label class="full">
-              What cost shots
-              <textarea name="leaks" placeholder="Miss patterns, penalties, short game, putting..."></textarea>
-            </label>
-            <label class="full">
-              Practice priority
-              <textarea name="practicePriority" placeholder="What should the next session attack?"></textarea>
-            </label>
-            <label class="full">
-              Mood / context
-              <textarea name="mood" placeholder="Energy, confidence, frustration, decision-making, conditions..."></textarea>
-            </label>
-            <label class="full">
-              Hole detail
-              <textarea
-                name="holeDetails"
-                placeholder="Optional CSV: hole,par,score,fw,gir,putts,penalties"
-              ></textarea>
-            </label>
-            <label class="full">
-              Screenshots
-              <input name="screenshots" type="file" accept="image/*" multiple />
-            </label>
-            <button class="primary-button full" type="submit">Save Round</button>
-          </form>
-        </section>
-      </section>
-
-      <section class="view" id="practice-view">
-        <section class="panel">
-          <div class="panel-header">
-            <h2>Add Practice</h2>
-          </div>
-          <form id="practice-form" class="form-grid">
-            <label>
-              Date
-              <input name="date" type="date" required />
-            </label>
-            <label>
-              Type
-              <select name="type">
-                <option>Range</option>
-                <option>Short game</option>
-                <option>Putting</option>
-                <option>Lesson</option>
-                <option>On-course</option>
-              </select>
-            </label>
-            <label class="full">
-              Themes
-              <input name="themes" placeholder="Start line, tempo, driver, wedges" />
-            </label>
-            <label class="full">
-              Feels and drills
-              <textarea name="notes" placeholder="What did you learn or want to remember?"></textarea>
-            </label>
-            <label class="full">
-              Transfer test
-              <textarea name="transfer" placeholder="How will you know this showed up on the course?"></textarea>
-            </label>
-            <button class="primary-button full" type="submit">Save Practice</button>
-          </form>
-        </section>
-
-        <section class="panel">
-          <div class="panel-header">
-            <h2>Practice Log</h2>
-            <span id="practice-count">0 sessions</span>
-          </div>
-          <div class="card-list" id="practice-list"></div>
         </section>
       </section>
 
@@ -291,16 +144,7 @@
 
         <section class="panel">
           <div class="panel-header">
-            <h2>Saved Insights</h2>
-            <span id="saved-insight-count">0 saved</span>
-          </div>
-          <div class="note-stack" id="saved-insight-list"></div>
-        </section>
-
-        <section class="panel">
-          <div class="panel-header">
             <h2>Generated Insights</h2>
-            <button class="secondary-button" id="copy-summary" type="button">Copy</button>
           </div>
           <div class="note-stack" id="insight-list"></div>
         </section>
@@ -310,7 +154,7 @@
     <template id="empty-state">
       <div class="empty-state">
         <strong>Nothing here yet.</strong>
-        <span>Save an entry and this view will come alive.</span>
+        <span>Add a round and this view will come alive.</span>
       </div>
     </template>
 
