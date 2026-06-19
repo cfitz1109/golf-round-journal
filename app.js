@@ -10,11 +10,53 @@ let state = { rounds: [], practice: [], insights: [] };
 
 function parseCsv(text) {
   if (!text || !text.trim()) return [];
-  return Papa.parse(text.trim(), {
-    header: true,
-    skipEmptyLines: true,
-    dynamicTyping: false,
-  }).data;
+  const rows = [];
+  let row = [];
+  let cell = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i += 1) {
+    const c = text[i];
+    const next = text[i + 1];
+
+    if (c === '"' && inQuotes && next === '"') {
+      cell += '"';
+      i += 1;
+      continue;
+    }
+
+    if (c === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+
+    if (c === "," && !inQuotes) {
+      row.push(cell);
+      cell = "";
+      continue;
+    }
+
+    if ((c === "\n" || c === "\r") && !inQuotes) {
+      if (c === "\r" && next === "\n") i += 1;
+      row.push(cell);
+      if (row.some((value) => value.length)) rows.push(row);
+      row = [];
+      cell = "";
+      continue;
+    }
+
+    cell += c;
+  }
+
+  if (cell.length || row.length) {
+    row.push(cell);
+    if (row.some((value) => value.length)) rows.push(row);
+  }
+
+  const [header = [], ...body] = rows;
+  return body.map((record) =>
+    Object.fromEntries(header.map((key, index) => [key, record[index] ?? ""])),
+  );
 }
 
 async function loadState() {
