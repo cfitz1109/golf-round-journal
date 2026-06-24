@@ -177,3 +177,12 @@ date,course,tees,round_score,hole,par,score,to_par,fairway,gir,putts,penalties
 2026-06-20,Falmouth Country Club,Green,88,16,3,3,0,,TRUE,2,0
 2026-06-20,Falmouth Country Club,Green,88,17,5,7,2,FALSE,FALSE,2,1
 2026-06-20,Falmouth Country Club,Green,88,18,4,6,2,FALSE,FALSE,1,1
+2026-06-24,Falmouth Country Club,Blue,44,1,4,6,2,TRUE,FALSE,3,0
+2026-06-24,Falmouth Country Club,Blue,44,2,3,3,0,,TRUE,2,0
+2026-06-24,Falmouth Country Club,Blue,44,3,4,6,2,FALSE,FALSE,2,1
+2026-06-24,Falmouth Country Club,Blue,44,4,4,5,1,TRUE,TRUE,3,0
+2026-06-24,Falmouth Country Club,Blue,44,5,3,5,2,,FALSE,1,1
+2026-06-24,Falmouth Country Club,Blue,44,6,5,5,0,FALSE,FALSE,1,0
+2026-06-24,Falmouth Country Club,Blue,44,7,4,4,0,TRUE,TRUE,2,0
+2026-06-24,Falmouth Country Club,Blue,44,8,5,6,1,FALSE,TRUE,3,0
+2026-06-24,Falmouth Country Club,Blue,44,9,4,4,0,FALSE,TRUE,2,0
